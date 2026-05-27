@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Queues from "./pages/Queues";
 function App() {
   return (
     <BrowserRouter>
@@ -13,6 +14,11 @@ function App() {
           <ProtectedRoute>
         <Dashboard />
        </ProtectedRoute>} />
+       <Route path="/queues" element={
+  <ProtectedRoute>
+    <Queues />
+  </ProtectedRoute>
+} />
       </Routes>
     </BrowserRouter>
   );
