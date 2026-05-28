@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Queues from "./pages/Queues";
+import Analytics from "./pages/Analytics";
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,11 @@ function App() {
        <Route path="/queues" element={
   <ProtectedRoute>
     <Queues />
+  </ProtectedRoute>
+} />
+<Route path="/analytics" element={
+  <ProtectedRoute>
+    <Analytics />
   </ProtectedRoute>
 } />
       </Routes>

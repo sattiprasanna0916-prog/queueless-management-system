@@ -23,6 +23,11 @@ function Sidebar() {
         <li>
           <Link to="/counters">Counters</Link>
         </li>
+        <Link to="/analytics">
+  <li className="p-3 hover:bg-blue-700 rounded">
+    Analytics
+  </li>
+</Link>
       </ul>
     </div>
   );
