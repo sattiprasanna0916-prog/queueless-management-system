@@ -1,24 +1,38 @@
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { useEffect } from "react";
+import NotificationCard from "../components/NotificationCard";
+import { useEffect, useState } from "react";
 import socket from "../services/socket";
 
-
 function LiveQueue() {
-   useEffect(() => {
 
-  socket.on("queue-update", (data) => {
-    console.log(data);
-  });
+  const [notification, setNotification] = useState("");
 
-  return () => {
-    socket.off("queue-update");
-  };
+  const [currentToken, setCurrentToken] = useState("A105");
 
-}, []);
-  const currentToken = "A105";
+  const [waitingUsers, setWaitingUsers] = useState(12);
 
-  const waitingUsers = 12;
+  useEffect(() => {
+
+    socket.on("queue-update", (data) => {
+
+      console.log(data);
+
+      setCurrentToken(data.currentToken);
+
+      setWaitingUsers(data.waitingUsers);
+
+      setNotification(
+        `Queue Updated: ${data.currentToken}`
+      );
+
+    });
+
+    return () => {
+      socket.off("queue-update");
+    };
+
+  }, []);
 
   return (
     <div className="flex">
@@ -30,6 +44,12 @@ function LiveQueue() {
         <Navbar />
 
         <div className="p-8">
+
+          {notification && (
+            <NotificationCard
+              message={notification}
+            />
+          )}
 
           <h1 className="text-3xl font-bold mb-8">
             Live Queue Tracking
@@ -66,6 +86,7 @@ function LiveQueue() {
         </div>
 
       </div>
+
     </div>
   );
 }

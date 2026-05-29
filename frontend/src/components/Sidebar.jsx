@@ -11,7 +11,9 @@ function Sidebar() {
         <li>
           <Link to="/dashboard">Dashboard</Link>
         </li>
-
+        <li>
+  <Link to="/tokens">Tokens</Link>
+</li>
         <li>
           <Link to="/queues">Queues</Link>
         </li>
@@ -19,7 +21,11 @@ function Sidebar() {
         <li>
           <Link to="/analytics">Analytics</Link>
         </li>
-
+        <li>
+  <Link to="/live-queue">
+    Live Queue
+  </Link>
+</li>
         <li>
           <Link to="/counters">Counters</Link>
         </li>
@@ -27,6 +33,11 @@ function Sidebar() {
   <li className="p-3 hover:bg-blue-700 rounded">
     Analytics
   </li>
+  <li>
+  <Link to="/counters">
+    Counters
+  </Link>
+</li>
 </Link>
       </ul>
     </div>

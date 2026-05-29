@@ -1,28 +1,51 @@
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import { useEffect, useState } from "react";
+import { getQueues } from "../services/queueService";
 
 function Queues() {
 
-  const queues = [
-    {
-      id: 1,
-      name: "Hospital Queue",
-      waiting: 15,
-      avgTime: "20 mins"
-    },
-    {
-      id: 2,
-      name: "Bank Queue",
-      waiting: 8,
-      avgTime: "10 mins"
+  const [queues, setQueues] = useState([]);
+
+  useEffect(() => {
+    fetchQueues();
+  }, []);
+
+  const fetchQueues = async () => {
+    try {
+
+      const response = await getQueues();
+
+      setQueues(response.data);
+
+    } catch (error) {
+
+      console.log(error);
+
+      setQueues([
+        {
+          id: 1,
+          name: "Hospital Queue",
+          waiting: 15,
+          avgTime: "20 mins"
+        },
+        {
+          id: 2,
+          name: "Bank Queue",
+          waiting: 8,
+          avgTime: "10 mins"
+        }
+      ]);
     }
-  ];
+  };
 
   return (
     <div className="flex">
+
       <Sidebar />
 
       <div className="flex-1 bg-gray-100 min-h-screen">
+
         <Navbar />
 
         <div className="p-8">
@@ -38,6 +61,7 @@ function Queues() {
                 key={queue.id}
                 className="bg-white shadow-lg rounded-xl p-6"
               >
+
                 <h2 className="text-2xl font-bold">
                   {queue.name}
                 </h2>
@@ -53,12 +77,16 @@ function Queues() {
                 <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
                   View Queue
                 </button>
+
               </div>
             ))}
 
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 }
