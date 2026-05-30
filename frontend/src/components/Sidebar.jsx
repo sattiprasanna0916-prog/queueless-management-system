@@ -38,6 +38,11 @@ function Sidebar() {
     Counters
   </Link>
 </li>
+<li>
+  <Link to="/prediction">
+    AI Prediction
+  </Link>
+</li>
 </Link>
       </ul>
     </div>

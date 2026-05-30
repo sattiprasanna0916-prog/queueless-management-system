@@ -7,6 +7,7 @@ import Tokens from "./pages/Tokens";
 import Analytics from "./pages/Analytics";
 import LiveQueue from "./pages/LiveQueue";
 import Counters from "./pages/Counters";
+import Prediction from "./pages/Prediction";
 function App() {
   return (
     <BrowserRouter>
@@ -49,6 +50,13 @@ function App() {
   element={
     <ProtectedRoute>
       <LiveQueue />
+    </ProtectedRoute>
+  }
+/><Route
+  path="/prediction"
+  element={
+    <ProtectedRoute>
+      <Prediction />
     </ProtectedRoute>
   }
 />
