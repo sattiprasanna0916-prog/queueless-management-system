@@ -34,6 +34,11 @@ function Sidebar() {
     Analytics
   </li>
   <li>
+  <Link to="/notifications">
+    Notifications
+  </Link>
+</li>
+  <li>
   <Link to="/counters">
     Counters
   </Link>

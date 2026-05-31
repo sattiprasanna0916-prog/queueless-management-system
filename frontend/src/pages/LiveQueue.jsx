@@ -74,7 +74,9 @@ function LiveQueue() {
               <h2 className="text-gray-500 text-xl">
                 Waiting Users
               </h2>
-
+            <AlertPopup
+  message="Your turn is approaching!"
+/>
               <p className="text-6xl font-bold text-green-600 mt-4">
                 {waitingUsers}
               </p>

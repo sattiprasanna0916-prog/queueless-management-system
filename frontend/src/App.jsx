@@ -8,6 +8,7 @@ import Analytics from "./pages/Analytics";
 import LiveQueue from "./pages/LiveQueue";
 import Counters from "./pages/Counters";
 import Prediction from "./pages/Prediction";
+import Notifications from "./pages/Notifications";
 function App() {
   return (
     <BrowserRouter>
@@ -57,6 +58,13 @@ function App() {
   element={
     <ProtectedRoute>
       <Prediction />
+    </ProtectedRoute>
+  }
+/><Route
+  path="/notifications"
+  element={
+    <ProtectedRoute>
+      <Notifications />
     </ProtectedRoute>
   }
 />
