@@ -17,7 +17,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/counters/**",
-                                "/api/counter/**"
+                                "/api/counter/**",
+                                "/api/analytics/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
