@@ -19,7 +19,8 @@ public class SecurityConfig {
                                 "/api/counters/**",
                                 "/api/counter/**",
                                 "/api/analytics/**",
-                                "/api/prediction/**"
+                                "/api/prediction/**",
+                                "/api/notifications/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
