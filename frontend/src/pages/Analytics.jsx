@@ -14,7 +14,26 @@ import {
 } from "recharts";
 
 function Analytics() {
+  const [loading, setLoading]
+= useState(true);
+if (loading) {
+  return <Loader />;
+}
+try {
 
+  const data =
+    await getAnalytics();
+
+  setAnalytics(data);
+
+} catch (error) {
+
+  console.log(error);
+
+}
+toast.success(
+  "Queue Created Successfully"
+);
   const peakHourData = [
     {
       hour: "9 AM",
