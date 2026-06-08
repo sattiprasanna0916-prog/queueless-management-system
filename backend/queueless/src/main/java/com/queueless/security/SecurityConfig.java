@@ -20,7 +20,8 @@ public class SecurityConfig {
                                 "/api/counter/**",
                                 "/api/analytics/**",
                                 "/api/prediction/**",
-                                "/api/notifications/**"
+                                "/api/notifications/**",
+                                "/api/health"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
