@@ -1,22 +1,26 @@
+
 package com.queueless.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "queues")
 public class Queue {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy =
+            GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
     private String currentToken;
 
-    private Integer waitingUsers;
+    private int waitingUsers;
 
     public Queue() {
     }
@@ -41,15 +45,19 @@ public class Queue {
         return currentToken;
     }
 
-    public void setCurrentToken(String currentToken) {
+    public void setCurrentToken(
+            String currentToken) {
+
         this.currentToken = currentToken;
     }
 
-    public Integer getWaitingUsers() {
+    public int getWaitingUsers() {
         return waitingUsers;
     }
 
-    public void setWaitingUsers(Integer waitingUsers) {
+    public void setWaitingUsers(
+            int waitingUsers) {
+
         this.waitingUsers = waitingUsers;
     }
 }
