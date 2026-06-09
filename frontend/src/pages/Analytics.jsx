@@ -1,3 +1,4 @@
+
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
@@ -14,26 +15,7 @@ import {
 } from "recharts";
 
 function Analytics() {
-  const [loading, setLoading]
-= useState(true);
-if (loading) {
-  return <Loader />;
-}
-try {
 
-  const data =
-    await getAnalytics();
-
-  setAnalytics(data);
-
-} catch (error) {
-
-  console.log(error);
-
-}
-toast.success(
-  "Queue Created Successfully"
-);
   const peakHourData = [
     {
       hour: "9 AM",
@@ -91,6 +73,7 @@ toast.success(
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
             <div className="bg-white shadow-lg rounded-xl p-6">
+
               <h2 className="text-gray-500">
                 Total Queues
               </h2>
@@ -98,9 +81,11 @@ toast.success(
               <p className="text-4xl font-bold mt-2">
                 12
               </p>
+
             </div>
 
             <div className="bg-white shadow-lg rounded-xl p-6">
+
               <h2 className="text-gray-500">
                 Avg Wait Time
               </h2>
@@ -108,9 +93,11 @@ toast.success(
               <p className="text-4xl font-bold mt-2">
                 15 mins
               </p>
+
             </div>
 
             <div className="bg-white shadow-lg rounded-xl p-6">
+
               <h2 className="text-gray-500">
                 Service Efficiency
               </h2>
@@ -118,6 +105,7 @@ toast.success(
               <p className="text-4xl font-bold mt-2">
                 80%
               </p>
+
             </div>
 
           </div>
@@ -199,3 +187,4 @@ toast.success(
 }
 
 export default Analytics;
+
