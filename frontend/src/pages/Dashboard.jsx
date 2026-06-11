@@ -1,7 +1,4 @@
-
-import { useEffect, useState }
-from "react";
-
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 import Navbar from "../components/Navbar";
@@ -10,41 +7,55 @@ import DashboardCard from "../components/DashboardCard";
 
 function Dashboard() {
 
-  const [queues, setQueues]
-    = useState([]);
+  const [queues, setQueues] = useState([]);
 
   useEffect(() => {
-
     fetchQueues();
-
   }, []);
 
   const fetchQueues = async () => {
 
     try {
 
-      const response =
-        await axios.get(
-          "http://localhost:8080/api/queues"
-        );
+      const response = await axios.get(
+        "http://localhost:8080/api/queues"
+      );
 
       setQueues(response.data);
 
     } catch (error) {
 
       console.log(error);
+
     }
   };
 
-  const totalQueues =
-    queues.length;
+  const totalQueues = queues.length;
 
-  const totalWaitingUsers =
-    queues.reduce(
-      (sum, queue) =>
-        sum + queue.waitingUsers,
-      0
-    );
+  const totalWaitingUsers = queues.reduce(
+    (sum, queue) =>
+      sum + queue.waitingUsers,
+    0
+  );
+
+  const avgWaitTime =
+    totalQueues > 0
+      ? Math.round(
+          totalWaitingUsers /
+          totalQueues
+        )
+      : 0;
+
+  const busiestQueue =
+    queues.length > 0
+      ? queues.reduce(
+          (max, queue) =>
+            queue.waitingUsers >
+            max.waitingUsers
+              ? queue
+              : max
+        )
+      : null;
 
   return (
     <div className="flex">
@@ -75,10 +86,40 @@ function Dashboard() {
 
             <DashboardCard
               title="Avg Wait Time"
-              value="15 mins"
+              value={`${avgWaitTime} mins`}
             />
 
           </div>
+
+          {busiestQueue && (
+
+            <div className="bg-white p-6 rounded-xl shadow-lg mt-8">
+
+              <h2 className="text-2xl font-bold mb-4">
+                Busiest Queue
+              </h2>
+
+              <p className="text-lg">
+                Queue Name:
+                {" "}
+                {busiestQueue.name}
+              </p>
+
+              <p className="text-lg">
+                Current Token:
+                {" "}
+                {busiestQueue.currentToken}
+              </p>
+
+              <p className="text-lg">
+                Waiting Users:
+                {" "}
+                {busiestQueue.waitingUsers}
+              </p>
+
+            </div>
+
+          )}
 
         </div>
 
@@ -89,4 +130,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-

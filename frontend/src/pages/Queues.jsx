@@ -1,20 +1,28 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { useEffect, useState } from "react";
-import { getQueues } from "../services/queueService";
 
 function Queues() {
 
   const [queues, setQueues] = useState([]);
+
+  const [name, setName] = useState("");
+  const [currentToken, setCurrentToken] = useState("");
+  const [waitingUsers, setWaitingUsers] = useState("");
 
   useEffect(() => {
     fetchQueues();
   }, []);
 
   const fetchQueues = async () => {
+
     try {
 
-      const response = await getQueues();
+      const response = await axios.get(
+        "http://localhost:8080/api/queues"
+      );
 
       setQueues(response.data);
 
@@ -22,20 +30,49 @@ function Queues() {
 
       console.log(error);
 
-      setQueues([
+    }
+  };
+
+  const createQueue = async () => {
+
+    try {
+
+      await axios.post(
+        "http://localhost:8080/api/queues",
         {
-          id: 1,
-          name: "Hospital Queue",
-          waiting: 15,
-          avgTime: "20 mins"
-        },
-        {
-          id: 2,
-          name: "Bank Queue",
-          waiting: 8,
-          avgTime: "10 mins"
+          name,
+          currentToken,
+          waitingUsers,
         }
-      ]);
+      );
+
+      fetchQueues();
+
+      setName("");
+      setCurrentToken("");
+      setWaitingUsers("");
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  };
+
+  const deleteQueue = async (id) => {
+
+    try {
+
+      await axios.delete(
+        `http://localhost:8080/api/queues/${id}`
+      );
+
+      fetchQueues();
+
+    } catch (error) {
+
+      console.log(error);
+
     }
   };
 
@@ -54,31 +91,75 @@ function Queues() {
             Queue Management
           </h1>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-xl shadow-lg mb-8">
+
+            <h2 className="text-xl font-bold mb-4">
+              Create Queue
+            </h2>
+
+            <input
+              type="text"
+              placeholder="Queue Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="border p-2 w-full mb-4 rounded"
+            />
+
+            <input
+              type="text"
+              placeholder="Current Token"
+              value={currentToken}
+              onChange={(e) => setCurrentToken(e.target.value)}
+              className="border p-2 w-full mb-4 rounded"
+            />
+
+            <input
+              type="number"
+              placeholder="Waiting Users"
+              value={waitingUsers}
+              onChange={(e) => setWaitingUsers(e.target.value)}
+              className="border p-2 w-full mb-4 rounded"
+            />
+
+            <button
+              onClick={createQueue}
+              className="bg-blue-600 text-white px-6 py-2 rounded"
+            >
+              Create Queue
+            </button>
+
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
             {queues.map((queue) => (
+
               <div
                 key={queue.id}
-                className="bg-white shadow-lg rounded-xl p-6"
+                className="bg-white p-6 rounded-xl shadow-lg"
               >
 
                 <h2 className="text-2xl font-bold">
                   {queue.name}
                 </h2>
 
-                <p className="mt-3 text-gray-600">
-                  Waiting Users: {queue.waiting}
+                <p className="mt-2">
+                  Current Token: {queue.currentToken}
                 </p>
 
-                <p className="text-gray-600">
-                  Avg Wait Time: {queue.avgTime}
+                <p>
+                  Waiting Users: {queue.waitingUsers}
                 </p>
 
-                <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
-                  View Queue
+                <button
+                  onClick={() => deleteQueue(queue.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-600"
+                >
+                  Delete Queue
                 </button>
 
               </div>
+
             ))}
 
           </div>

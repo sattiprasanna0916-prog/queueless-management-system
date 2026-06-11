@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tokens")
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:5173")
 public class TokenController {
 
     @Autowired
@@ -24,6 +24,34 @@ public class TokenController {
     @PostMapping
     public Token createToken(
             @RequestBody Token token) {
+
+        token.setStatus("WAITING");
+
+        return tokenRepository.save(token);
+    }
+
+    @PutMapping("/{id}/call")
+    public Token callToken(
+            @PathVariable Long id) {
+
+        Token token =
+                tokenRepository.findById(id)
+                        .orElseThrow();
+
+        token.setStatus("SERVING");
+
+        return tokenRepository.save(token);
+    }
+
+    @PutMapping("/{id}/complete")
+    public Token completeToken(
+            @PathVariable Long id) {
+
+        Token token =
+                tokenRepository.findById(id)
+                        .orElseThrow();
+
+        token.setStatus("COMPLETED");
 
         return tokenRepository.save(token);
     }
