@@ -3,7 +3,10 @@ import axios from "axios";
 
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-
+import {
+  connectSocket,
+  disconnectSocket
+} from "../services/socket";
 function Queues() {
 
   const [queues, setQueues] = useState([]);
@@ -13,8 +16,18 @@ function Queues() {
   const [waitingUsers, setWaitingUsers] = useState("");
 
   useEffect(() => {
+
+  fetchQueues();
+
+  connectSocket(() => {
     fetchQueues();
-  }, []);
+  });
+
+  return () => {
+    disconnectSocket();
+  };
+
+}, []);
 
   const fetchQueues = async () => {
 
@@ -45,7 +58,10 @@ function Queues() {
           waitingUsers,
         }
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Queue Created"
+);
       fetchQueues();
 
       setName("");
@@ -66,7 +82,10 @@ function Queues() {
       await axios.delete(
         `http://localhost:8080/api/queues/${id}`
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Queue Deleted"
+);
       fetchQueues();
 
     } catch (error) {

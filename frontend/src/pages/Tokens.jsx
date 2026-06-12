@@ -3,7 +3,10 @@ import axios from "axios";
 
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-
+import {
+  connectSocket,
+  disconnectSocket
+} from "../services/socket";
 function Tokens() {
 
   const [tokens, setTokens] = useState([]);
@@ -12,8 +15,18 @@ function Tokens() {
   const [customerName, setCustomerName] = useState("");
 
   useEffect(() => {
+
+  fetchTokens();
+
+  connectSocket(() => {
     fetchTokens();
-  }, []);
+  });
+
+  return () => {
+    disconnectSocket();
+  };
+
+}, []);
 
   const fetchTokens = async () => {
 
@@ -43,7 +56,10 @@ function Tokens() {
           customerName
         }
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Token Created"
+);
       setTokenNumber("");
       setCustomerName("");
 
@@ -63,7 +79,10 @@ function Tokens() {
       await axios.put(
         `http://localhost:8080/api/tokens/${id}/call`
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Token Called"
+);
       fetchTokens();
 
     } catch (error) {
@@ -80,7 +99,10 @@ function Tokens() {
       await axios.put(
         `http://localhost:8080/api/tokens/${id}/complete`
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Token Completed"
+);
       fetchTokens();
 
     } catch (error) {
@@ -97,7 +119,10 @@ function Tokens() {
       await axios.delete(
         `http://localhost:8080/api/tokens/${id}`
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Token Deleted"
+);
       fetchTokens();
 
     } catch (error) {
