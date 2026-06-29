@@ -11,9 +11,7 @@ function Tokens() {
 
   const [tokens, setTokens] = useState([]);
 
-  const [tokenNumber, setTokenNumber] = useState("");
-  const [customerName, setCustomerName] = useState("");
-
+  
   useEffect(() => {
 
   fetchTokens();
@@ -44,33 +42,7 @@ function Tokens() {
 
     }
   };
-
-  const createToken = async () => {
-
-    try {
-
-      await axios.post(
-        "http://localhost:8080/api/tokens",
-        {
-          tokenNumber,
-          customerName
-        }
-      );
-      await axios.post(
-  "http://localhost:8080/api/live/update",
-  "Token Created"
-);
-      setTokenNumber("");
-      setCustomerName("");
-
-      fetchTokens();
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
-  };
+    
 
   const callToken = async (id) => {
 
@@ -146,41 +118,6 @@ function Tokens() {
           <h1 className="text-3xl font-bold mb-6">
             Token Management
           </h1>
-
-          <div className="bg-white p-6 rounded-xl shadow-lg mb-8">
-
-            <h2 className="text-xl font-bold mb-4">
-              Generate Token
-            </h2>
-
-            <input
-              type="text"
-              placeholder="Token Number"
-              value={tokenNumber}
-              onChange={(e) =>
-                setTokenNumber(e.target.value)
-              }
-              className="border p-2 w-full mb-4 rounded"
-            />
-
-            <input
-              type="text"
-              placeholder="Customer Name"
-              value={customerName}
-              onChange={(e) =>
-                setCustomerName(e.target.value)
-              }
-              className="border p-2 w-full mb-4 rounded"
-            />
-
-            <button
-              onClick={createToken}
-              className="bg-blue-600 text-white px-6 py-2 rounded"
-            >
-              Generate Token
-            </button>
-
-          </div>
 
           <table className="w-full bg-white shadow rounded-xl">
 

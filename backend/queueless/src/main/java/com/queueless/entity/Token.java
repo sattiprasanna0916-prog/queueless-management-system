@@ -10,12 +10,20 @@ import lombok.*;
 public class Token {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.IDENTITY
+    )
     private Long id;
 
     private String tokenNumber;
 
     private String customerName;
+
+    private String email;
+
+    private String serviceType;
+
+    private String assignedCounter;
 
     private String status;
 }

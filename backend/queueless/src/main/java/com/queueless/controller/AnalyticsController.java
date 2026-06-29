@@ -1,13 +1,19 @@
 package com.queueless.controller;
 
-import com.queueless.entity.Queue;
-import com.queueless.repository.QueueRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.queueless.entity.Queue;
+import com.queueless.entity.Token;
+import com.queueless.repository.QueueRepository;
+import com.queueless.repository.TokenRepository;
 
 @RestController
 @RequestMapping("/api/analytics")
@@ -17,22 +23,79 @@ public class AnalyticsController {
     @Autowired
     private QueueRepository queueRepository;
 
+    @Autowired
+    private TokenRepository tokenRepository;
+
     @GetMapping
     public Map<String, Object> getAnalytics() {
 
-        List<Queue> queues = queueRepository.findAll();
+        List<Queue> queues =
+                queueRepository.findAll();
 
-        int totalQueues = queues.size();
+        List<Token> tokens =
+                tokenRepository.findAll();
 
-        int totalWaitingUsers = queues.stream()
-                .mapToInt(Queue::getWaitingUsers)
-                .sum();
+        int totalQueues =
+                queues.size();
 
-        Map<String, Object> response = new HashMap<>();
+        int totalWaitingUsers =
+                queues.stream()
+                        .mapToInt(
+                                Queue::getWaitingUsers
+                        )
+                        .sum();
 
-        response.put("totalQueues", totalQueues);
-        response.put("totalWaitingUsers", totalWaitingUsers);
-        response.put("avgWaitTime", "15 mins");
+        long completedTokens =
+                tokens.stream()
+                        .filter(
+                                t -> t.getStatus()
+                                        .equals("COMPLETED")
+                        )
+                        .count();
+
+        long pendingTokens =
+                tokens.stream()
+                        .filter(
+                                t -> t.getStatus()
+                                        .equals("WAITING")
+                        )
+                        .count();
+
+        long servingTokens =
+                tokens.stream()
+                        .filter(
+                                t -> t.getStatus()
+                                        .equals("SERVING")
+                        )
+                        .count();
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+        response.put(
+                "totalQueues",
+                totalQueues
+        );
+
+        response.put(
+                "totalWaitingUsers",
+                totalWaitingUsers
+        );
+
+        response.put(
+                "completedTokens",
+                completedTokens
+        );
+
+        response.put(
+                "pendingTokens",
+                pendingTokens
+        );
+
+        response.put(
+                "servingTokens",
+                servingTokens
+        );
 
         return response;
     }

@@ -1,18 +1,45 @@
+import { useState } from "react";
+import axios from "axios";
+
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import PredictionCard from "../components/PredictionCard";
 
 function Prediction() {
 
-  const predictionData = {
+  const [peopleAhead, setPeopleAhead] =
+    useState("");
 
-    estimatedWaitTime: "18 mins",
+  const [avgServiceTime, setAvgServiceTime] =
+    useState("");
 
-    peopleAhead: 6,
+  const [predictionData, setPredictionData] =
+    useState(null);
 
-    averageServiceTime: "3 mins",
+  const getPrediction = async () => {
 
-    recommendedCounter: "Counter 2",
+    try {
+
+      const response = await axios.post(
+        "http://localhost:8080/api/prediction",
+        {
+          peopleAhead:
+            Number(peopleAhead),
+
+          avgServiceTime:
+            Number(avgServiceTime),
+        }
+      );
+
+      setPredictionData(
+        response.data
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
   };
 
   return (
@@ -31,60 +58,97 @@ function Prediction() {
             AI Waiting Time Prediction
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white shadow-xl rounded-xl p-8 mb-8">
 
-            <PredictionCard
-              title="Estimated Wait"
-              value={
-                predictionData.estimatedWaitTime
+            <input
+              type="number"
+              placeholder="People Ahead"
+              value={peopleAhead}
+              onChange={(e) =>
+                setPeopleAhead(e.target.value)
               }
+              className="border p-2 rounded w-full mb-4"
             />
 
-            <PredictionCard
-              title="People Ahead"
-              value={
-                predictionData.peopleAhead
+            <input
+              type="number"
+              placeholder="Average Service Time"
+              value={avgServiceTime}
+              onChange={(e) =>
+                setAvgServiceTime(
+                  e.target.value
+                )
               }
+              className="border p-2 rounded w-full mb-4"
             />
 
-            <PredictionCard
-              title="Avg Service Time"
-              value={
-                predictionData.averageServiceTime
-              }
-            />
-
-            <PredictionCard
-              title="Best Counter"
-              value={
-                predictionData.recommendedCounter
-              }
-            />
+            <button
+              onClick={getPrediction}
+              className="bg-blue-600 text-white px-6 py-2 rounded"
+            >
+              Predict Wait Time
+            </button>
 
           </div>
 
-          <div className="bg-white shadow-xl rounded-xl p-8 mt-10">
+          {predictionData && (
 
-            <h2 className="text-2xl font-bold mb-4">
-              AI Recommendation
-            </h2>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<PredictionCard
+  title="Estimated Wait"
+  value={
+    `${predictionData.estimatedWaitTime} mins`
+  }
+/>
 
-            <p className="text-lg leading-8">
+<PredictionCard
+  title="People Ahead"
+  value={
+    predictionData.peopleAhead
+  }
+/>
 
-              Based on current queue load and
-              historical service times,
-              the system recommends
-              assigning the next user to
+<PredictionCard
+  title="Avg Service Time"
+  value={
+    `${predictionData.averageServiceTime} mins`
+  }
+/>
 
-              <span className="font-bold text-blue-600">
-                {" "}Counter 2
-              </span>
+<PredictionCard
+  title="Best Counter"
+  value={
+    predictionData.recommendedCounter
+  }
+/>
 
-              to reduce waiting time.
+              </div>
 
-            </p>
+              <div className="bg-white shadow-xl rounded-xl p-8 mt-10">
 
-          </div>
+                <h2 className="text-2xl font-bold mb-4">
+                  AI Recommendation
+                </h2>
+
+                <p className="text-lg leading-8">
+
+                  Based on current queue load,
+                  the system recommends
+
+                  <span className="font-bold text-blue-600">
+                    {" "}
+                    {predictionData.recommendedCounter}
+                  </span>
+
+                  to reduce waiting time.
+
+                </p>
+
+              </div>
+            </>
+
+          )}
 
         </div>
 

@@ -2,34 +2,72 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import NotificationCard from "../components/NotificationCard";
 import { useEffect, useState } from "react";
-import socket from "../services/socket";
+import axios from "axios";
+import {
+  connectSocket,
+  disconnectSocket
+} from "../services/socket";
 
 function LiveQueue() {
 
-  const [notification, setNotification] = useState("");
+  const [notification, setNotification] =
+    useState("");
 
-  const [currentToken, setCurrentToken] = useState("A105");
+  const [currentToken, setCurrentToken] =
+  useState("");
 
-  const [waitingUsers, setWaitingUsers] = useState(12);
+const [waitingUsers, setWaitingUsers] =
+  useState(0);
+  const fetchLiveQueue = async () => {
 
-  useEffect(() => {
+  try {
 
-    socket.on("queue-update", (data) => {
-
-      console.log(data);
-
-      setCurrentToken(data.currentToken);
-
-      setWaitingUsers(data.waitingUsers);
-
-      setNotification(
-        `Queue Updated: ${data.currentToken}`
+    const response =
+      await axios.get(
+        "http://localhost:8080/api/tokens"
       );
 
+    const tokens =
+      response.data;
+
+    const servingToken =
+      tokens.find(
+        (token) =>
+          token.status === "SERVING"
+      );
+
+    const waitingCount =
+      tokens.filter(
+        (token) =>
+          token.status === "WAITING"
+      ).length;
+
+    setCurrentToken(
+      servingToken
+        ? servingToken.tokenNumber
+        : "No Active Token"
+    );
+
+    setWaitingUsers(
+      waitingCount
+    );
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+  useEffect(() => {
+fetchLiveQueue();
+    connectSocket((message) => {
+
+      console.log(message);
+
+      setNotification(message);
+        fetchLiveQueue();
     });
 
     return () => {
-      socket.off("queue-update");
+      disconnectSocket();
     };
 
   }, []);
@@ -47,7 +85,9 @@ function LiveQueue() {
 
           {notification && (
             <NotificationCard
+              title="Live Update"
               message={notification}
+              time="Just now"
             />
           )}
 
@@ -74,9 +114,7 @@ function LiveQueue() {
               <h2 className="text-gray-500 text-xl">
                 Waiting Users
               </h2>
-            <AlertPopup
-  message="Your turn is approaching!"
-/>
+
               <p className="text-6xl font-bold text-green-600 mt-4">
                 {waitingUsers}
               </p>

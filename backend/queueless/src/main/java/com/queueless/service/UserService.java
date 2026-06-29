@@ -7,38 +7,91 @@ import com.queueless.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
 
-    public String registerUser(RegisterRequest request) {
+    public String registerUser(
+            RegisterRequest request) {
 
         User user = new User();
 
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        if (userRepository.findByEmail(
+                request.getEmail()
+        ).isPresent()) {
+            return "Email already exists";
+        }
+
+        user.setName(
+                request.getName()
+        );
+
+        user.setEmail(
+                request.getEmail()
+        );
+
+        user.setPassword(
+                request.getPassword()
+        );
+
+        user.setRole(
+                request.getRole()
+        );
 
         userRepository.save(user);
 
         return "User Registered Successfully";
     }
 
-    public String loginUser(LoginRequest request) {
+    public Map<String, String> loginUser(
+            LoginRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElse(null);
+        User user =
+                userRepository.findByEmail(
+                        request.getEmail()
+                ).orElse(null);
+
+        Map<String, String> response =
+                new HashMap<>();
 
         if (user == null) {
-            return "User Not Found";
+            response.put(
+                    "message",
+                    "User Not Found"
+            );
+            return response;
         }
 
-        if (!user.getPassword().equals(request.getPassword())) {
-            return "Invalid Password";
+        if (!user.getPassword().equals(
+                request.getPassword()
+        )) {
+            response.put(
+                    "message",
+                    "Invalid Password"
+            );
+            return response;
         }
 
-        return "Login Successful";
+        response.put(
+                "message",
+                "Login Successful"
+        );
+
+        response.put(
+                "role",
+                user.getRole()
+        );
+
+        response.put(
+                "email",
+                user.getEmail()
+        );
+
+        return response;
     }
 }

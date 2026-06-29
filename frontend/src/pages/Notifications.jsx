@@ -1,35 +1,50 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import NotificationCard from "../components/NotificationCard";
 
+import {
+  connectSocket,
+  disconnectSocket
+} from "../services/socket";
+
 function Notifications() {
 
-  const notifications = [
+  const [notifications, setNotifications] =
+    useState([]);
 
-    {
-      id: 1,
-      title: "Queue Alert",
-      message:
-        "Your token A101 will be called soon.",
-      time: "2 mins ago",
-    },
+  useEffect(() => {
 
-    {
-      id: 2,
-      title: "Counter Assigned",
-      message:
-        "Please proceed to Counter 2.",
-      time: "5 mins ago",
-    },
+    fetchNotifications();
 
-    {
-      id: 3,
-      title: "Queue Updated",
-      message:
-        "Waiting time reduced to 10 mins.",
-      time: "8 mins ago",
-    },
-  ];
+    connectSocket(() => {
+      fetchNotifications();
+    });
+
+    return () => {
+      disconnectSocket();
+    };
+
+  }, []);
+
+  const fetchNotifications = async () => {
+
+    try {
+
+      const response = await axios.get(
+        "http://localhost:8080/api/notifications"
+      );
+
+      setNotifications(response.data);
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  };
 
   return (
 
@@ -50,23 +65,31 @@ function Notifications() {
             </h1>
 
             <div className="bg-red-500 text-white px-4 py-2 rounded-full">
-              3 New
+              {notifications.length} New
             </div>
 
           </div>
-        <AlertPopup
-  message="Your turn is approaching!"
-/>
-          {notifications.map((item) => (
 
-            <NotificationCard
-              key={item.id}
-              title={item.title}
-              message={item.message}
-              time={item.time}
-            />
+          {notifications.length > 0 ? (
 
-          ))}
+            notifications.map((item, index) => (
+
+              <NotificationCard
+                key={index}
+                title="Queue Alert"
+                message={item}
+                time="Just now"
+              />
+
+            ))
+
+          ) : (
+
+            <div className="bg-white p-6 rounded-xl shadow-lg">
+              No notifications yet
+            </div>
+
+          )}
 
         </div>
 

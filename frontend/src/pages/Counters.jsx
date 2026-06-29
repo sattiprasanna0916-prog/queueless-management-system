@@ -4,7 +4,10 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import CounterCard from "../components/CounterCard";
-
+import {
+  connectSocket,
+  disconnectSocket
+} from "../services/socket";
 function Counters() {
 
   const [counters, setCounters] = useState([]);
@@ -13,8 +16,18 @@ function Counters() {
     useState(null);
 
   useEffect(() => {
+
+  fetchCounters();
+
+  connectSocket(() => {
     fetchCounters();
-  }, []);
+  });
+
+  return () => {
+    disconnectSocket();
+  };
+
+}, []);
 
   const fetchCounters = async () => {
 
@@ -44,7 +57,10 @@ function Counters() {
           currentLoad: 0
         }
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Counter Created"
+);
       setCounterName("");
 
       fetchCounters();
@@ -63,7 +79,10 @@ function Counters() {
       await axios.put(
         `http://localhost:8080/api/counters/${id}/increase`
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Counter Load Increased"
+);
       fetchCounters();
 
     } catch (error) {
@@ -80,7 +99,10 @@ function Counters() {
       await axios.put(
         `http://localhost:8080/api/counters/${id}/decrease`
       );
-
+       await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Counter Load Decreased"
+);
       fetchCounters();
 
     } catch (error) {
@@ -97,7 +119,10 @@ function Counters() {
       await axios.delete(
         `http://localhost:8080/api/counters/${id}`
       );
-
+await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Counter Deleted"
+);
       fetchCounters();
 
     } catch (error) {
@@ -114,7 +139,10 @@ function Counters() {
       const response = await axios.get(
         "http://localhost:8080/api/counters/allocate"
       );
-
+      await axios.post(
+  "http://localhost:8080/api/live/update",
+  "Counter Allocated"
+);
       setAllocatedCounter(response.data);
 
       fetchCounters();

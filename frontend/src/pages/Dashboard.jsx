@@ -4,58 +4,66 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import DashboardCard from "../components/DashboardCard";
+import {
+  connectSocket,
+  disconnectSocket
+} from "../services/socket";
 
 function Dashboard() {
 
-  const [queues, setQueues] = useState([]);
+  const [tokens, setTokens] =
+    useState([]);
 
   useEffect(() => {
-    fetchQueues();
+
+    fetchTokens();
+
+    connectSocket(() => {
+      fetchTokens();
+    });
+
+    return () => {
+      disconnectSocket();
+    };
+
   }, []);
 
-  const fetchQueues = async () => {
+  const fetchTokens = async () => {
 
     try {
 
-      const response = await axios.get(
-        "http://localhost:8080/api/queues"
-      );
+      const response =
+        await axios.get(
+          "http://localhost:8080/api/tokens"
+        );
 
-      setQueues(response.data);
+      setTokens(response.data);
 
     } catch (error) {
-
       console.log(error);
-
     }
   };
 
-  const totalQueues = queues.length;
+  const totalTokens =
+    tokens.length;
 
-  const totalWaitingUsers = queues.reduce(
-    (sum, queue) =>
-      sum + queue.waitingUsers,
-    0
-  );
+  const waitingUsers =
+    tokens.filter(
+      (token) =>
+        token.status === "WAITING"
+    ).length;
 
-  const avgWaitTime =
-    totalQueues > 0
-      ? Math.round(
-          totalWaitingUsers /
-          totalQueues
-        )
-      : 0;
+  const servingUsers =
+    tokens.filter(
+      (token) =>
+        token.status === "SERVING"
+    ).length;
 
-  const busiestQueue =
-    queues.length > 0
-      ? queues.reduce(
-          (max, queue) =>
-            queue.waitingUsers >
-            max.waitingUsers
-              ? queue
-              : max
-        )
-      : null;
+  const completedTokens =
+    tokens.filter(
+      (token) =>
+        token.status === "COMPLETED"
+    ).length;
 
   return (
     <div className="flex">
@@ -72,54 +80,29 @@ function Dashboard() {
             Dashboard
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
             <DashboardCard
-              title="Active Queues"
-              value={totalQueues}
+              title="Total Tokens"
+              value={totalTokens}
             />
 
             <DashboardCard
               title="Waiting Users"
-              value={totalWaitingUsers}
+              value={waitingUsers}
             />
 
             <DashboardCard
-              title="Avg Wait Time"
-              value={`${avgWaitTime} mins`}
+              title="Serving Now"
+              value={servingUsers}
+            />
+
+            <DashboardCard
+              title="Completed"
+              value={completedTokens}
             />
 
           </div>
-
-          {busiestQueue && (
-
-            <div className="bg-white p-6 rounded-xl shadow-lg mt-8">
-
-              <h2 className="text-2xl font-bold mb-4">
-                Busiest Queue
-              </h2>
-
-              <p className="text-lg">
-                Queue Name:
-                {" "}
-                {busiestQueue.name}
-              </p>
-
-              <p className="text-lg">
-                Current Token:
-                {" "}
-                {busiestQueue.currentToken}
-              </p>
-
-              <p className="text-lg">
-                Waiting Users:
-                {" "}
-                {busiestQueue.waitingUsers}
-              </p>
-
-            </div>
-
-          )}
 
         </div>
 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,11 +7,11 @@ function Login() {
 
   const navigate = useNavigate();
 
-  const [email, setEmail]
-    = useState("");
+  const [email, setEmail] =
+    useState("");
 
-  const [password, setPassword]
-    = useState("");
+  const [password, setPassword] =
+    useState("");
 
   const handleLogin = async () => {
 
@@ -29,12 +28,46 @@ function Login() {
 
       console.log(response.data);
 
-      localStorage.setItem(
-        "token",
-        response.data
+      console.log(
+        "Email from backend:",
+        response.data.email
       );
 
-      navigate("/dashboard");
+      if (
+        response.data.message ===
+        "Login Successful"
+      ) {
+
+        localStorage.setItem(
+          "token",
+          "loggedin"
+        );
+
+        localStorage.setItem(
+          "role",
+          response.data.role
+        );
+
+        // Important fix
+        // Always save typed login email
+localStorage.setItem(
+  "email",
+  email
+);
+
+        console.log(
+          "Saved email:",
+          localStorage.getItem("email")
+        );
+
+        navigate("/dashboard");
+
+      } else {
+
+        alert(
+          response.data.message
+        );
+      }
 
     } catch (error) {
 
@@ -85,4 +118,3 @@ function Login() {
 }
 
 export default Login;
-

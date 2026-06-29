@@ -1,13 +1,19 @@
 package com.queueless.controller;
 
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.queueless.dto.PredictionResponse;
 import com.queueless.service.PredictionService;
 
-import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/api/prediction")
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:5173")
 public class PredictionController {
 
     private final PredictionService predictionService;
@@ -18,19 +24,24 @@ public class PredictionController {
         this.predictionService = predictionService;
     }
 
-    @GetMapping
-    public PredictionResponse getPrediction() {
+    @PostMapping
+    public PredictionResponse getPrediction(
+            @RequestBody Map<String, Object> request) {
 
-        Integer peopleAhead = 6;
+        Integer peopleAhead =
+                (Integer) request.get("peopleAhead");
 
-        Double avgServiceTime = 3.0;
+        Double avgServiceTime =
+                Double.valueOf(
+                        request.get("avgServiceTime")
+                                .toString()
+                );
 
         Double estimatedTime =
-                predictionService
-                        .calculateWaitTime(
-                                peopleAhead,
-                                avgServiceTime
-                        );
+                predictionService.calculateWaitTime(
+                        peopleAhead,
+                        avgServiceTime
+                );
 
         return new PredictionResponse(
                 peopleAhead,
