@@ -164,13 +164,4 @@ spring.jpa.hibernate.ddl-auto=update
 * QR-based token generation
 * Mobile responsive enhancements
 
----
-
-## Deployment
-
-Frontend: Vercel
-Backend: Render
-Database: MySQL
-
----
 
